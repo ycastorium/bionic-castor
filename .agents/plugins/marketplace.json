@@ -1,0 +1,20 @@
+{
+  "name": "bionic-castor",
+  "interface": {
+    "displayName": "Bionic Castor"
+  },
+  "plugins": [
+    {
+      "name": "bionic-castor",
+      "source": {
+        "source": "local",
+        "path": "../.."
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

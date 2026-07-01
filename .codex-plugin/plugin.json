@@ -1,0 +1,33 @@
+{
+  "name": "bionic-castor",
+  "version": "0.1.0",
+  "description": "Skills to make my life better",
+  "author": {
+    "name": "Ygor Castor",
+    "email": "ycastor@edlon.tech"
+  },
+  "skills": "./skills/",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "workflow",
+    "tdd",
+    "tasks",
+    "over-engineering"
+  ],
+  "interface": {
+    "displayName": "Bionic Castor",
+    "shortDescription": "Personal workflow skills for Codex.",
+    "longDescription": "Bionic Castor bundles personal workflow skills for brainstorming, task generation, task implementation, TDD, Obsidian notes, and Ponytail-style minimal engineering.",
+    "developerName": "Ygor Castor",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use ponytail mode for this change.",
+      "Turn this design into tasks.",
+      "Help me implement this tasks.md."
+    ]
+  }
+}
