@@ -11,6 +11,10 @@ The `obsidian` binary drives a running Obsidian desktop app to read and write va
 
 Obsidian.app must already be running with the target vault open. If a command returns empty output or an error mentioning no active vault, ask the user to open Obsidian first rather than guessing at a fix.
 
+## Never run bare `obsidian`
+
+Running `obsidian` with no arguments does NOT print usage — it tries to launch a new Obsidian UI instance and can hang the shell indefinitely. Always pass a command. When unsure which command or option to use, run `obsidian --help` for the command list or `obsidian help <command>` for one command's options — never experiment with a bare invocation.
+
 ## Invocation shape
 
 ```
@@ -133,4 +137,4 @@ Many list commands accept `format=json|tsv|csv` (default is usually `tsv` or a p
 
 ## Everything else
 
-Vault/plugin/theme management, sync, version history, bookmarks, templates, Bases queries, and developer/debug commands (`dev:*`, `eval`) are documented in `references/commands.md`. Consult it for anything not covered above rather than guessing at flag names — the CLI has no tolerance for unknown options and fails silently or with a generic error.
+Vault/plugin/theme management, sync, version history, bookmarks, templates, Bases queries, and developer/debug commands (`dev:*`, `eval`) are documented in `references/commands.md`. Consult it (or `obsidian help <command>`) for anything not covered above rather than guessing at flag names — the CLI has no tolerance for unknown options and fails silently or with a generic error.

@@ -4,7 +4,7 @@ Use this template when dispatching a spec document reviewer subagent.
 
 **Purpose:** Verify the spec is complete, consistent, and ready for implementation planning.
 
-**Dispatch after:** Spec document is written to docs/superpowers/specs/
+**Dispatch after:** Spec document is written to the project vault at `specs/YYYY-MM-DD-<topic>/design.md`
 
 ```
 Task tool (general-purpose):
@@ -23,6 +23,10 @@ Task tool (general-purpose):
     | Clarity | Requirements ambiguous enough to cause someone to build the wrong thing |
     | Scope | Focused enough for a single plan — not covering multiple independent subsystems |
     | YAGNI | Unrequested features, over-engineering |
+    | Reasoning | The why is explained — context, problem, motivation — not just what to build |
+    | Alternatives | Discarded approaches are recorded with the specific reason each was rejected |
+    | Diagrams | Flows are shown as mermaid diagrams, each paired with prose explaining the why |
+    | Audience | A junior developer or new stakeholder could follow it without prior context |
 
     ## Calibration
 

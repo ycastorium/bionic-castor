@@ -2,6 +2,7 @@
 
 > Generated from design doc: `<path/to/design.md>`
 > Each task below is **one commit**. Implement top to bottom; respect `Depends on`.
+> Tasks sharing a wave in `## Execution Waves` may be implemented in parallel.
 
 **Goal:** <one sentence describing what this builds>
 
@@ -12,6 +13,15 @@
 - [ ] Task 1: <title>
 - [ ] Task 2: <title>
 - [ ] Task 3: <title>
+
+---
+
+## Execution Waves
+
+> Tasks in the same wave have no dependencies on each other and touch disjoint files — they can be implemented in parallel. Waves run in order; a wave starts only after the previous one is fully merged and green.
+
+- Wave 1: Task 1, Task 2
+- Wave 2: Task 3
 
 ---
 

@@ -28,9 +28,10 @@ Turn a design document into an ordered list of **commit-sized tasks**. Each task
 2. **Find real code pointers.** Use ast-grep / ripgrep to locate the modules, functions, and patterns each task will touch. Pointers must reference files that exist (or be clearly marked `Create:`). Never invent paths.
 3. **Decompose into commit-sized tasks.** Each task = one coherent change, typically a handful of files, that compiles/passes tests on its own. Not a single line; not an entire feature.
 4. **Order by dependency.** Earlier tasks unblock later ones. Record `Depends on` for *hard* dependencies (a task can't compile or pass without an earlier task's code) so the order forms a DAG with no cycles. A *soft* forward reference — e.g. an email task linking to a route created later — is not a hard dependency: note it as a `Reference:` pointer and keep the hard-dependency graph acyclic.
-5. **Write the file** from `tasks-template.md`, filling every field for every task.
-6. **Self-review** (see checklist below).
-7. **Finish** — tell the user the task list is done and where it lives (see Finishing below).
+5. **Mark execution waves.** Group tasks into waves in the `## Execution Waves` section. Two tasks may share a wave only when **both** hold: no dependency path between them in the DAG, and their `Create:`/`Modify:` pointers touch disjoint files (two tasks editing the same file will merge-conflict even if logically independent). When in doubt, put them in separate waves — a wrong "parallel" costs merge conflicts; a wrong "sequential" only costs time. A wave with a single task is normal.
+6. **Write the file** from `tasks-template.md`, filling every field for every task.
+7. **Self-review** (see checklist below).
+8. **Finish** — tell the user the task list is done and where it lives (see Finishing below).
 
 ## Task Granularity
 
@@ -63,7 +64,8 @@ After writing, re-read the design doc and check:
 1. **Coverage** — every requirement/section maps to at least one task. List and fill gaps.
 2. **Pointers are real** — each `Modify:`/`Reference:` path exists; each `Create:` is genuinely new.
 3. **Dependencies are sound** — order is a DAG; nothing depends on a later task.
-4. **Naming consistency** — a symbol created in Task 3 is referenced by the same name later.
+4. **Waves are safe** — every task appears in exactly one wave; no task shares a wave with one of its (transitive) dependencies; no file appears in the `Create:`/`Modify:` pointers of two tasks in the same wave.
+5. **Naming consistency** — a symbol created in Task 3 is referenced by the same name later.
 
 Fix issues inline before finishing.
 
@@ -76,5 +78,5 @@ Once the self-review passes, tell the user the task list is complete. State:
 
 Example:
 
-> Task list complete: `specs/2026-06-16-<feature>/tasks.md` (8 tasks, self-reviewed).
+> Task list complete: `specs/2026-06-16-<feature>/tasks.md` (8 tasks in 3 waves, self-reviewed).
 > To start building, load the **implementing-tasks** skill — it sets up an isolated workspace and drives each task through implementation, code review, and progress tracking.

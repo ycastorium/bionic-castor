@@ -1,6 +1,8 @@
-# Subagent-Driven Flow
+# Sequential Subagent Flow
 
 You (this session) are the **parent/orchestrator**. You do not write task code yourself — you dispatch subagents and keep both the native task list and `tasks.md` in Obsidian up to date.
+
+Tasks are implemented **strictly one at a time, in list order**, directly in the base workspace (the feature branch or worktree from Branching Mode). The `## Execution Waves` section of `tasks.md` is ignored here — it only matters to the parallel flow.
 
 ## Picking the implementer agent
 

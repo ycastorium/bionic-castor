@@ -2,6 +2,8 @@
 
 You (this session) are the **implementer**. You write the task code yourself, working with the user as a pair. You delegate only the **code review** to a separate agent.
 
+Work happens directly in the base workspace, one task at a time in list order — the `## Execution Waves` section of `tasks.md` is ignored here; it only matters to the parallel flow.
+
 ## Flow
 
 ```mermaid
