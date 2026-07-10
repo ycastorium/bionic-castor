@@ -11,7 +11,7 @@ Take a `tasks.md` task list — produced by the [[generate-tasks]] skill — and
 
 **Announce at start:** "I'm using the implementing-tasks skill to implement the task list."
 
-**Input:** the `tasks.md` (and its sibling `design.md`) in the project's Obsidian vault, usually under `specs/YYYY-MM-DD-<feature>/`. If you don't have the path, ask for it before doing anything else.
+**Input:** the `tasks.md` (and its siblings `architecture.md` and `spec.md`) in the project's Obsidian vault, usually under `specs/YYYY-MM-DD-<feature>/`. If you don't have the path, ask for it before doing anything else.
 
 ## When to Use
 
@@ -79,7 +79,7 @@ Before the loop, mirror `tasks.md` into your preferred task-tracking tool — th
 For each unchecked task in `tasks.md`, in dependency order:
 
 1. **Mark it in progress** in the native task list (`TaskUpdate` → `in_progress`).
-2. **Read the task** plus the relevant parts of `design.md`. Honour `Depends on`.
+2. **Read the task** plus the relevant parts of `architecture.md`. Honour `Depends on`.
 3. **Implement** the task (who does this depends on the chosen mode).
 4. **Code review** the change (delegated to a review agent in all modes).
 5. **Address review findings**, then **commit** using the task's suggested message.
@@ -91,7 +91,7 @@ In Parallel mode, steps 1–5 run concurrently for every task in the current wav
 
 ## Handling Confusion
 
-If an implementing or reviewing agent is blocked or unsure, it must **ping the parent (this session) and wait** — never guess. The parent analyses the question against `design.md`/`tasks.md`; if it still can't be resolved, the parent asks the user via `AskUserQuestion` and relays the answer back.
+If an implementing or reviewing agent is blocked or unsure, it must **ping the parent (this session) and wait** — never guess. The parent analyses the question against `architecture.md`/`spec.md`/`tasks.md`; if it still can't be resolved, the parent asks the user via `AskUserQuestion` and relays the answer back.
 
 ## Once All Tasks Are Done
 

@@ -42,7 +42,7 @@ flowchart TD
    ```
 
    Get each worktree's path from `wt list --format json`.
-3. Dispatch one implementer subagent per task, all concurrently, each pointed at its own worktree path. Pick or create agents the same way the sequential flow does: prefer a specialised agent over a generic one, choose the model by task complexity. Every implementer follows the same rules: read `design.md` and its task first, **tdd skill mandatory**, **ponytail** for simplicity, implement only the assigned task, and **ping the parent and wait** when blocked — never guess.
+3. Dispatch one implementer subagent per task, all concurrently, each pointed at its own worktree path. Pick or create agents the same way the sequential flow does: prefer a specialised agent over a generic one, choose the model by task complexity. Every implementer follows the same rules: read `architecture.md` and its task first, **tdd skill mandatory**, **ponytail** for simplicity, implement only the assigned task, and **ping the parent and wait** when blocked — never guess.
 4. Each task is code-reviewed inside its own worktree (separate review agent, **ponytail-review** plus the task's acceptance criteria) and committed there as **a single commit** with the task's suggested message — review fixes get amended in, not stacked as extra commits.
 
 **Reintegration (parent does this, one task at a time):**
@@ -61,7 +61,7 @@ flowchart TD
 
 ## Handling confusion
 
-Same rule as the sequential flow: a blocked agent pings the parent and waits; the parent answers from `design.md`/`tasks.md` or escalates to the user via `AskUserQuestion` and relays the answer. With several agents in flight, answer pings promptly — a blocked agent stalls only its own worktree, but the wave cannot close until every task lands.
+Same rule as the sequential flow: a blocked agent pings the parent and waits; the parent answers from `architecture.md`/`tasks.md` or escalates to the user via `AskUserQuestion` and relays the answer. With several agents in flight, answer pings promptly — a blocked agent stalls only its own worktree, but the wave cannot close until every task lands.
 
 ## Cleanup
 

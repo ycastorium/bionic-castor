@@ -9,7 +9,7 @@ Work happens directly in the base workspace, one task at a time in list order �
 ```mermaid
 flowchart TD
     Pick([Next unchecked task]) --> Prog[Mark task in_progress in native list]
-    Prog --> Read[Read design.md + task in Obsidian]
+    Prog --> Read[Read architecture.md + task in Obsidian]
     Read --> Impl[Implement the task yourself]
     Impl --> Stuck{Decision unclear?}
     Stuck -->|yes| Ask[Ask the user via AskUserQuestion]
@@ -25,10 +25,10 @@ flowchart TD
 
 ## How you work each task
 
-1. **Mark it `in_progress`** in the native task list, then **read** `design.md` and the task in `tasks.md` (Obsidian). Honour `Depends on` and code pointers.
+1. **Mark it `in_progress`** in the native task list, then **read** `architecture.md` and the task in `tasks.md` (Obsidian). Honour `Depends on` and code pointers.
 2. **Implement it yourself.** **Load and follow the `tdd` skill** (mandatory) — drive each task red-green-refactor: failing test first, make it pass, then refactor. Apply the **ponytail** skill — laziest, simplest solution that actually works. Pair with the user: surface decisions, don't silently choose. When a design question can't be answered from the docs, ask via `AskUserQuestion`.
 3. **Delegate code review** to a review agent. That agent:
-   - Reads `design.md` and the task.
+   - Reads `architecture.md` and the task.
    - Uses the **ponytail-review** skill plus the task's acceptance criteria.
    - Reports findings back to you; if it's unsure, it pings you and waits.
 4. **Address findings**, re-review if needed, then **commit** with the task's suggested message.

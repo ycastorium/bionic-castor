@@ -24,7 +24,7 @@ flowchart TD
     Sel --> Impl[Dispatch implementer]
     Impl --> Confused{Agent blocked?}
     Confused -->|yes| Ping[Agent pings parent and waits]
-    Ping --> Parent[Parent checks design/tasks]
+    Ping --> Parent[Parent checks architecture/spec/tasks]
     Parent --> Resolvable{Parent can answer?}
     Resolvable -->|yes| Reply[Parent replies to agent]
     Resolvable -->|no| Ask[Parent asks user via AskUserQuestion]
@@ -42,14 +42,14 @@ flowchart TD
 ## Agent instructions
 
 **Every implementer agent must:**
-- Read `design.md` and `tasks.md` in the Obsidian vault before coding.
+- Read `architecture.md` and `tasks.md` in the Obsidian vault before coding.
 - **Load and follow the `tdd` skill** (mandatory) — drive the task red-green-refactor: write a failing test first, make it pass, then refactor.
 - Use the **ponytail** skill — laziest, simplest solution that actually works.
 - Implement only the assigned task, respecting its `Depends on` and code pointers.
 - If confused or needing a decision, **ping the parent and wait** — never guess.
 
 **Every code-review agent must:**
-- Read `design.md` and the task in `tasks.md`.
+- Read `architecture.md` and the task in `tasks.md`.
 - Use the **ponytail-review** skill — review focused on over-engineering and simplification, plus the task's acceptance criteria.
 - Report findings to the parent; if unsure, ping the parent and wait.
 
@@ -57,6 +57,6 @@ flowchart TD
 
 - Mark the task `in_progress` in the native task list before dispatching.
 - Dispatch the implementer, then the reviewer.
-- Resolve pings: answer from `design.md`/`tasks.md`, or escalate to the user via `AskUserQuestion`, then relay the answer.
+- Resolve pings: answer from `architecture.md`/`tasks.md`, or escalate to the user via `AskUserQuestion`, then relay the answer.
 - After review passes and the commit lands, mark the task `completed` in the native list and **check its box and acceptance criteria** in `tasks.md` in Obsidian.
 - Move to the next task. When all are done, hand back to the SKILL.md "Once All Tasks Are Done" step.

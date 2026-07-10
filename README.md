@@ -10,8 +10,9 @@ copied verbatim:
 - `ponytail-debt` — harvest `ponytail:` comments into a debt ledger
 - `implementing-tasks` — drive a tasks.md list through implementation
 - `tdd` — test-driven development with red-green-refactor
-- `generate-tasks` — break a design doc into a commit-sized task list
-- `brainstorming` — explore intent and requirements before implementation
+- `generate-tasks` — break an architecture doc into a commit-sized task list
+- `brainstorming` — explore intent, requirements and business decisions into a spec
+- `architect` — turn an approved spec into a technical architecture document
 - `obsidian-cli` — read and write Obsidian notes via the `obsidian` CLI
 
 ## Installation

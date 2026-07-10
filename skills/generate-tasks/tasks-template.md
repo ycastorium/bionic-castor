@@ -1,6 +1,6 @@
 # <Feature Name> — Implementation Tasks
 
-> Generated from design doc: `<path/to/design.md>`
+> Generated from architecture doc: `<path/to/architecture.md>` (spec: `<path/to/spec.md>`)
 > Each task below is **one commit**. Implement top to bottom; respect `Depends on`.
 > Tasks sharing a wave in `## Execution Waves` may be implemented in parallel.
 
@@ -27,7 +27,7 @@
 
 ## Task 1: <short imperative title>
 
-**What:** <1-3 sentences: what needs to exist after this commit, and why. Reference the design doc section it implements.>
+**What:** <1-3 sentences: what needs to exist after this commit, and why. Reference the architecture doc section it implements.>
 
 **Code pointers:**
 - Create: `exact/path/to/new_file.ext` — <responsibility>
