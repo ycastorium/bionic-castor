@@ -31,7 +31,7 @@ flowchart TD
    - Reads `architecture.md` and the task.
    - Uses the **ponytail-review** skill plus the task's acceptance criteria.
    - Reports findings back to you; if it's unsure, it pings you and waits.
-4. **Address findings**, re-review if needed, then **commit** with the task's suggested message.
+4. **Address findings**, re-review if needed, then **commit** with the task's suggested message (`git commit` on git; `jj commit -m` on Jujutsu — no staging).
 5. **Mark the task done** — set it `completed` in the native task list and check its box and acceptance criteria in `tasks.md` in Obsidian.
 
 When all tasks are checked off, return to the SKILL.md "Once All Tasks Are Done" step: inform the user and request next steps.

@@ -58,5 +58,6 @@ flowchart TD
 - Mark the task `in_progress` in the native task list before dispatching.
 - Dispatch the implementer, then the reviewer.
 - Resolve pings: answer from `architecture.md`/`tasks.md`, or escalate to the user via `AskUserQuestion`, then relay the answer.
-- After review passes and the commit lands, mark the task `completed` in the native list and **check its box and acceptance criteria** in `tasks.md` in Obsidian.
+- Once review passes, commit the task with its suggested message (`git commit` on git; `jj commit -m` on Jujutsu — no staging).
+- After the commit lands, mark the task `completed` in the native list and **check its box and acceptance criteria** in `tasks.md` in Obsidian.
 - Move to the next task. When all are done, hand back to the SKILL.md "Once All Tasks Are Done" step.
