@@ -22,15 +22,35 @@ Take a `tasks.md` task list — produced by the [[generate-tasks]] skill — and
 - No task list yet → use the [[generate-tasks]] skill first.
 - A single ad-hoc change with no task list → just do it.
 
+## Detect the Version Control System
+
+Before the two decisions, detect whether the repo is managed by **Jujutsu**. Check for a `.jj/` directory at the repo root (e.g. `jj root` succeeds).
+
+- **Jujutsu detected** → **announce it**: "This repo uses Jujutsu — I'll use the jj flows for branching and commits." Then **load the [[jujutsu]] skill** and use jj commands throughout the rest of this skill: bookmarks instead of git branches, `jj workspace` instead of `git worktree`, `jj commit`/`jj describe` instead of `git commit`. If the repo is colocated (`.jj/` **and** `.git/`), still prefer jj for all writes.
+- **No `.jj/`** → use the standard git flows exactly as written below.
+
+The two decisions and the per-task loop have the **same shape** either way; only the underlying VCS commands change. Use this mapping wherever a step below names a git command:
+
+| Step | git flow | jj flow (see [[jujutsu]]) |
+|------|----------|---------------------------|
+| Feature line | `git switch -c feat/<x>` | work on a stack, then `jj bookmark create feat/<x> -r @` |
+| Isolated workspace | `wt switch --create feat/<x>` | `jj workspace add ../<feature>` |
+| Commit a task | `git add -A && git commit -m "..."` | `jj commit -m "..."` (no staging) |
+| Merge a parallel wave into base | merge the wave branch | `jj rebase -s <wave-root> -d <base-bookmark>`, then advance the base bookmark |
+| Open a PR at the end | `git push` + `gh pr create` | follow the "open a PR" flow in the jujutsu skill's `references/git-interop.md` |
+
 ## The Two Decisions
 
 Before any code, make two choices **with the user** via `AskUserQuestion`. Don't assume — ask. The decisions are orthogonal: **Branching Mode** is *where* the work lands, **Execution Mode** is *how* tasks get implemented.
 
 ```mermaid
 flowchart TD
-    Start([tasks.md ready]) --> Q1{Branching mode?}
-    Q1 -->|Feature Branch| Branch[Ensure feature branch]
-    Q1 -->|Worktree| WT[wt switch --create]
+    Start([tasks.md ready]) --> Detect{Jujutsu repo?}
+    Detect -->|yes| JJ[Announce + load jujutsu skill,<br>use jj flows throughout]
+    Detect -->|no| Q1{Branching mode?}
+    JJ --> Q1
+    Q1 -->|Feature Branch| Branch[Ensure feature branch / jj bookmark]
+    Q1 -->|Worktree| WT[wt switch --create / jj workspace add]
     Branch --> Q2{Execution mode?}
     WT --> Q2
     Q2 -->|Pair Programming| PP[Read pair-programming-flow.md]
@@ -53,6 +73,8 @@ Ask: **Feature Branch** or **Worktree**?
 - **Worktree:** Create one with worktrunk — `wt switch --create feat/<feature>` — then continue inside it. Worktrunk places the worktree per project config and runs the project's post-create hooks (env setup, deps), so prefer it over raw `git worktree` commands.
 
 Either way the result is one **base workspace** — the branch or worktree where every task ultimately lands. The execution flows call it the *base*.
+
+**On a Jujutsu repo:** "Feature Branch" means building your stack of task commits and putting a **bookmark** on the tip (`jj bookmark create <name> -r @`) — bookmarks don't auto-advance, so re-`set` it as the stack grows. "Worktree" means a **jj workspace** (`jj workspace add`), each with its own `@`. See the [[jujutsu]] skill for the mechanics.
 
 ### Decision 2 — Execution Mode
 
@@ -82,7 +104,7 @@ For each unchecked task in `tasks.md`, in dependency order:
 2. **Read the task** plus the relevant parts of `architecture.md`. Honour `Depends on`.
 3. **Implement** the task (who does this depends on the chosen mode).
 4. **Code review** the change (delegated to a review agent in all modes).
-5. **Address review findings**, then **commit** using the task's suggested message.
+5. **Address review findings**, then **commit** using the task's suggested message (`git commit` on a git repo; `jj commit -m` on a Jujutsu repo — no staging).
 6. **Mark the task done** — set it `completed` in the native task list **and** check its box in the `## Progress` section plus its acceptance criteria in `tasks.md` in Obsidian.
 
 A task is not done until it is reviewed, committed, and checked off in both the native list and Obsidian.
@@ -95,11 +117,13 @@ If an implementing or reviewing agent is blocked or unsure, it must **ping the p
 
 ## Once All Tasks Are Done
 
-Confirm every box in `## Progress` is checked, every native task is `completed`, and tests pass. Then **inform the user** the task list is complete and **ask for next steps** (e.g. open a PR, merge, finish the branch). Do not auto-merge or push unless asked.
+Confirm every box in `## Progress` is checked, every native task is `completed`, and tests pass. Then **inform the user** the task list is complete and **ask for next steps** (e.g. open a PR, merge, finish the branch). Do not auto-merge or push unless asked. On a Jujutsu repo, set the bookmark on the tip and follow the "open a PR" flow in the [[jujutsu]] skill's `references/git-interop.md` when the user asks to push.
 
 ## Common Mistakes
 
 - Skipping the two decisions and silently picking a mode. Always ask.
+- Not checking for `.jj/` first, then using git commands on a Jujutsu repo. Detect the VCS before branching or committing.
+- On a jj repo, committing tasks but forgetting to move the bookmark to the tip before pushing — the pushed branch stays stale.
 - Forgetting to seed the native task list before the loop starts.
 - Marking a task done before review and commit. Order is fixed.
 - Letting an agent invent answers when confused instead of pinging up.
