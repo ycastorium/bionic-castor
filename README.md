@@ -14,6 +14,8 @@ copied verbatim:
 - `brainstorming` — explore intent, requirements and business decisions into a spec
 - `architect` — turn an approved spec into a technical architecture document
 - `obsidian-cli` — read and write Obsidian notes via the `obsidian` CLI
+- `jujutsu` — drive the `jj` CLI without falling back on git muscle memory
+- `ripgrep` — use `rg` correctly: escaping, file selection, and output shaping
 
 ## Installation
 
