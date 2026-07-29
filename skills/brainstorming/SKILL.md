@@ -1,6 +1,6 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Triages the request onto a fast lane (simple changes: quick discussion + short note, then straight to implementation) or the full spec flow (real design decisions: explores intent and produces a spec document for the architect skill)."
+description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Triages the request onto a fast lane (simple changes: quick discussion + confirmed plan in chat, then straight to implementation) or the full spec flow (real design decisions: explores intent and produces a spec document for the architect skill)."
 ---
 
 # Brainstorming Ideas Into Specs
@@ -12,7 +12,7 @@ Start by understanding the current project context, then **triage the request** 
 <HARD-GATE>
 Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until EITHER:
 - (full spec flow) you have presented a spec and the user has approved it, OR
-- (fast lane) you have written the short note and the user has confirmed the lane and the note.
+- (fast lane) you have stated the plan in chat and the user has confirmed both the lane and the plan.
 
 You may never skip straight to implementation with no triage, no discussion, and no user confirmation.
 </HARD-GATE>
@@ -52,8 +52,8 @@ For requests triaged onto the fast lane, complete these in order — no spec, no
 1. **Explore project context** — check the relevant files, docs, recent commits
 2. **Propose the lane** — state that this looks simple, why, and get the user's confirmation to skip the full spec
 3. **Quick clarifying discussion** — a short back-and-forth (one question at a time) to nail down exactly what's being changed and how you'll know it's right
-4. **Write the short note** — 3-5 lines: the problem and what you're going to do; save to the vault at `specs/YYYY-MM-DD-<topic>/note.md`
-5. **User confirms the note** — a quick "here's what I'll do, look right?" before touching code
+4. **State the plan in chat** — 3-5 lines: what you're changing, why, and how you'll know it's done. Do NOT write a note to the vault; the fast lane produces no document
+5. **User confirms the plan** — a quick "here's what I'll do, look right?" before touching code
 6. **Hand off to implementation** — proceed directly to implementing the change
 
 If the discussion surfaces real design decisions or ambiguity, escalate to the full spec flow and tell the user why.
@@ -77,11 +77,11 @@ You MUST create a task for each of these items and complete them in order:
 flowchart TD
     explore[Explore project context] --> triage{Triage:<br>simple or has design decisions?}
     triage -- simple, user confirms fast lane --> fastdiscuss[Quick clarifying discussion]
-    fastdiscuss --> note[Write short note to vault]
-    note --> noteok{User confirms note?}
-    noteok -- changes --> fastdiscuss
-    noteok -- escalate: hidden decisions --> questions
-    noteok -- approved --> impl([Hand off to implementation])
+    fastdiscuss --> plan[State plan in chat]
+    plan --> planok{User confirms plan?}
+    planok -- changes --> fastdiscuss
+    planok -- escalate: hidden decisions --> questions
+    planok -- approved --> impl([Hand off to implementation])
     triage -- design decisions --> questions[Ask clarifying questions]
     questions --> approaches[Propose 2-3 problem-level options]
     approaches --> present[Present spec sections]
@@ -96,7 +96,7 @@ flowchart TD
     specreview -- approved --> done([Reviewed spec in vault,<br>hand off to architect skill])
 ```
 
-**Two terminal states.** On the **fast lane**, the terminal state is a confirmed short note, and the next step is implementation directly. On the **full spec flow**, the terminal state is a reviewed spec in obsidian — do NOT invoke frontend-design, mcp-builder, or any other implementation skill; the next step is the **architect** skill, which turns the spec into a technical architecture document.
+**Two terminal states.** On the **fast lane**, the terminal state is a confirmed plan in chat — nothing is written to the vault — and the next step is implementation directly. On the **full spec flow**, the terminal state is a reviewed spec in obsidian — do NOT invoke frontend-design, mcp-builder, or any other implementation skill; the next step is the **architect** skill, which turns the spec into a technical architecture document.
 
 ## The Process
 
@@ -141,15 +141,15 @@ Step back and attack the approved direction as if reviewing a colleague's work. 
 
 If the critique surfaces anything material, bring it back to the user before writing the doc ("before I write this up, the critique pass raised X") and revise if needed. If nothing material comes up, say so briefly and continue. Either way, keep the critique findings — they go into the spec's Critique Findings section as part of the reasoning trail.
 
-## Fast Lane Note Structure
+## Fast Lane Plan Structure
 
-For fast-lane changes, skip the full spec structure and write a short note (3-5 lines) to `specs/YYYY-MM-DD-<topic>/note.md`:
+For fast-lane changes, skip the full spec structure and no document is written — state a short plan (3-5 lines) directly in chat:
 
 - **What** — the change in one sentence
 - **Why** — the problem or reason it's needed
 - **Done when** — the observable condition that means it's finished
 
-No options analysis, no critique pass, no architect hand-off. Confirm the note with the user, then implement.
+No vault note, no options analysis, no critique pass, no architect hand-off. Confirm the plan with the user, then implement.
 
 ## Spec Document Structure
 
