@@ -16,6 +16,7 @@ copied verbatim:
 - `obsidian-cli` — read and write Obsidian notes via the `obsidian` CLI
 - `jujutsu` — drive the `jj` CLI without falling back on git muscle memory
 - `ripgrep` — use `rg` correctly: escaping, file selection, and output shaping
+- `gh-stack` — manage stacked pull requests with the `gh stack` CLI extension
 
 ## Installation
 
