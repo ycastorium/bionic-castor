@@ -14,7 +14,7 @@ Turn an approved spec into a technical architecture document. The spec settled t
 **Output:** `architecture.md` next to the spec, linking back to it.
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, or scaffold anything until the architecture document is written and the user has approved it. The terminal state of this skill is a reviewed architecture document in the vault.
+Do NOT invoke any implementation skill, write any code to the codebase, or scaffold anything until the architecture document is written and the user has approved it. Illustrative sketches *inside the architecture document* are expected and encouraged; files in the repo are not. The terminal state of this skill is a reviewed architecture document in the vault.
 </HARD-GATE>
 
 ## Scaling Down
@@ -86,6 +86,17 @@ flowchart TD
 - Can someone understand what a unit does without reading its internals? Can you change the internals without breaking consumers? If not, the boundaries need work.
 - Smaller, well-bounded units are also easier for you to work with - you reason better about code you can hold in context at once, and your edits are more reliable when files are focused. When a file grows large, that's often a signal that it's doing too much.
 
+**Sketching the implementation:**
+
+Where prose or a diagram would leave the implementer guessing, write a short sketch in the repo's primary language. Sketches remove the most common failure mode of hand-off: an implementation agent that invents an interface shape or algorithm the architect never intended.
+
+- **Interfaces as signatures.** For each new or significantly changed unit, sketch its public surface as real signatures in the repo's language — function heads, struct/type definitions, module callbacks, trait/behaviour declarations — using the codebase's actual naming conventions and existing types where they exist.
+- **Pseudocode for non-obvious logic.** Sketch algorithms, state transitions, and tricky integration glue as language-flavored pseudocode: real syntax for structure, `# ...` / `// ...` comments for the parts that are obvious. A reader should see the *shape* of the logic — branching, iteration, error paths — without the boilerplate.
+- **Keep sketches honest.** Use real module paths, real types, and the repo's error-handling idiom (e.g., `{:ok, _}/{:error, _}` tuples in Elixir, `Result` in Rust). A sketch that references invented types is worse than no sketch.
+- **Keep sketches short.** 5-30 lines each. If a sketch wants to be longer, the unit is probably too big — fix the boundary, not the sketch.
+- **Mark them as illustrative.** Sketches show intent, not final code; the implementer may adjust details as long as the interface contract and logic shape hold. Say so once in the document.
+- **Don't sketch the trivial.** CRUD pass-throughs, config plumbing, and code that follows an existing pattern verbatim need a pointer to the pattern, not pseudocode. Sketching everything is ceremony; sketch only where ambiguity lives.
+
 **Critique review (after approval, before writing the doc):**
 
 Step back and attack the approved architecture as if reviewing a colleague's work. Ask yourself:
@@ -106,13 +117,14 @@ Required sections, in order:
 1. **Summary** — two or three sentences: the technical shape of the solution. Link to the spec.
 2. **Considered Approaches** — every technical approach discussed, including the discarded ones. For each: what it was, what made it attractive, and the specific reason it was rejected. This section prevents future readers from relitigating settled decisions.
 3. **System Overview** — the chosen architecture at a glance: components and how they relate. Use a mermaid `flowchart`. Name real modules and files where they already exist.
-4. **Components** — for each new or significantly modified unit: its purpose, its interface (how consumers use it), and what it depends on. Reference real paths and existing patterns to follow.
+4. **Components** — for each new or significantly modified unit: its purpose, its interface (how consumers use it), and what it depends on. Show the interface as a signature sketch in the repo's language (see *Sketching the implementation*). Reference real paths and existing patterns to follow.
 5. **Data & Flows** — how data moves and changes. Use mermaid: `sequenceDiagram` for interactions between components or services, `flowchart` for decision logic, `stateDiagram-v2` for lifecycles, `erDiagram` for data models and schema changes.
-6. **Technology Choices** — libraries, services, storage, protocols: what was chosen and why, including what was deliberately not adopted.
-7. **Error Handling & Edge Cases** — what can go wrong and what the system does about it.
-8. **Testing Strategy** — how we will know it works: what gets unit tests, what needs integration coverage, what is verified manually.
-9. **Critique Findings** — the output of the critique review: what was reconsidered, what was missed and then addressed, and anything accepted as a known limitation.
-10. **Open Questions** — anything deferred to implementation, and what would resolve it.
+6. **Implementation Sketches** — language-flavored pseudocode for the non-obvious parts: core algorithms, state transitions, tricky integration glue. Each sketch names the unit it belongs to and pairs with a sentence of why it's shaped that way. Omit this section entirely when nothing is non-obvious — a pointer to an existing pattern beats a sketch of it.
+7. **Technology Choices** — libraries, services, storage, protocols: what was chosen and why, including what was deliberately not adopted.
+8. **Error Handling & Edge Cases** — what can go wrong and what the system does about it.
+9. **Testing Strategy** — how we will know it works: what gets unit tests, what needs integration coverage, what is verified manually.
+10. **Critique Findings** — the output of the critique review: what was reconsidered, what was missed and then addressed, and anything accepted as a known limitation.
+11. **Open Questions** — anything deferred to implementation, and what would resolve it.
 
 ## After the Design
 
@@ -126,11 +138,12 @@ After writing the document, look at it with fresh eyes:
 
 1. **Spec coverage:** Every Goal in the spec maps to something in this design; nothing here serves a Non-Goal. Every Constraint is respected. This is the drift guard between the two documents — list gaps and fix them.
 2. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or hand-waved mechanisms? Fix them.
-3. **Internal consistency:** Do the diagrams match the prose? Does a component's interface match how other sections use it?
+3. **Internal consistency:** Do the diagrams match the prose? Does a component's interface match how other sections use it? Do the sketches match the interfaces they claim to implement?
 4. **Pointers are real:** Referenced files, modules, and patterns exist in the codebase (or are clearly marked as new). Never invent paths.
 5. **Diagram check:** Every flow is shown as a mermaid diagram paired with prose; no diagram floats unexplained.
-6. **Feasibility check:** Could the generate-tasks skill decompose this into commit-sized tasks without guessing? If a section is too vague to plan from, sharpen it.
-7. **YAGNI check:** Anything designed that no spec goal asks for? Cut it.
+6. **Sketch check:** Sketches are in the repo's language, use real types and the codebase's idioms, stay short, and are marked illustrative. Every non-obvious mechanism has one; nothing trivial does.
+7. **Feasibility check:** Could the generate-tasks skill decompose this into commit-sized tasks without guessing? If a section is too vague to plan from, sharpen it.
+8. **YAGNI check:** Anything designed that no spec goal asks for? Cut it.
 
 Fix any issues inline. No need to re-review — just fix and move on.
 
@@ -151,6 +164,7 @@ Once the user approves the architecture, suggest loading the **generate-tasks** 
 - **The spec is the contract** - Design within its goals, non-goals, and constraints; push spec changes back to the spec, don't absorb them silently
 - **Explore before designing** - Read the real codebase; follow its patterns
 - **Diagrams plus prose** - Mermaid shows the shape, prose explains the why
+- **Sketch where ambiguity lives** - Signatures and pseudocode in the repo's language for the non-obvious parts; pointers to existing patterns for the rest. Sketches show intent, not final code.
 - **Explore alternatives** - Always propose 2-3 technical approaches before settling
 - **YAGNI ruthlessly** - Design only what the spec's goals require
 - **Critique your own work** - After approval, ask what you would do differently and what you missed

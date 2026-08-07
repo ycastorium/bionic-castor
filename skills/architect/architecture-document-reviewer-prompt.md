@@ -25,6 +25,7 @@ Task tool (general-purpose):
     | Consistency | Diagrams contradicting prose, a component's interface not matching how other sections use it |
     | Pointers | Referenced files, modules, and patterns actually exist in the codebase, or are clearly marked as new |
     | Diagrams | Flows shown as mermaid diagrams, each paired with prose explaining the why |
+    | Sketches | Interface signatures and pseudocode for non-obvious logic are in the repo's language, use real types/idioms, match the component sections, and stay illustrative (not full implementations) |
     | Feasibility | Concrete enough that generate-tasks could decompose it into commit-sized tasks without guessing |
     | Error handling | Failure modes identified with a stated response, not ignored |
     | Testing | A strategy that would actually catch the design breaking |
