@@ -90,7 +90,7 @@ If the user picks Parallel but `tasks.md` has no `## Execution Waves` section (o
 
 ## Seed the Native Task List
 
-Before the loop, mirror `tasks.md` into your preferred task-tracking tool — the harness's native task list (`TaskCreate`). This gives the user live, in-session progress alongside the Obsidian checkboxes.
+Before the loop, mirror `tasks.md` into your preferred task-tracking tool, the harness's task tool (TaskCreate, pi-task, etc). This gives the user live, in-session progress alongside the Obsidian checkboxes.
 
 - Parse the `## Progress` section of `tasks.md` and create **one tracked task per entry**, in the same order, with the same titles.
 - Keep both views in sync throughout the loop: the native list is the working tracker; the Obsidian checkboxes are the durable record.
