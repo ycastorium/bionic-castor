@@ -17,6 +17,7 @@ copied verbatim:
 - `jujutsu` — drive the `jj` CLI without falling back on git muscle memory
 - `ripgrep` — use `rg` correctly: escaping, file selection, and output shaping
 - `gh-stack` — manage stacked pull requests with the `gh stack` CLI extension
+- `elixir` — develop Elixir code using current language guidance and focused references
 
 ## Installation
 
