@@ -34,7 +34,7 @@ The two decisions and the per-task loop have the **same shape** either way; only
 | Step | git flow | jj flow (see [[jujutsu]]) |
 |------|----------|---------------------------|
 | Feature line | `git switch -c feat/<x>` | work on a stack, then `jj bookmark create feat/<x> -r @` |
-| Isolated workspace | `wt switch --create feat/<x>` | `jj workspace add ../<feature>` |
+| Isolated workspace | `wt switch --create feat/<x>` (place under `.workspaces/`) | `jj workspace add .workspaces/<feature>` |
 | Commit a task | `git add -A && git commit -m "..."` | `jj commit -m "..."` (no staging) |
 | Merge a parallel wave into base | merge the wave branch | `jj rebase -s <wave-root> -d <base-bookmark>`, then advance the base bookmark |
 | Open a PR at the end | `git push` + `gh pr create` | follow the "open a PR" flow in the jujutsu skill's `references/git-interop.md` |
@@ -75,6 +75,23 @@ Ask: **Feature Branch** or **Worktree**?
 Either way the result is one **base workspace** — the branch or worktree where every task ultimately lands. The execution flows call it the *base*.
 
 **On a Jujutsu repo:** "Feature Branch" means building your stack of task commits and putting a **bookmark** on the tip (`jj bookmark create <name> -r @`) — bookmarks don't auto-advance, so re-`set` it as the stack grows. "Worktree" means a **jj workspace** (`jj workspace add`), each with its own `@`. See the [[jujutsu]] skill for the mechanics.
+
+#### Workspace placement and build/deps sharing
+
+When creating any isolated workspace (git worktree or jj workspace), apply two conventions — they hold for **both** git and jj:
+
+1. **Place workspaces under `.workspaces/` in the repo root** (e.g. `.workspaces/feat-<feature>`, `.workspaces/task-<n>-<slug>`). Keeps every throwaway workspace in one predictable, git-ignored location instead of scattering sibling directories next to the repo. Add `.workspaces/` to `.gitignore` (and `.jj`'s ignore) if it isn't already. If worktrunk's project config points elsewhere, honour that; otherwise steer it at `.workspaces/`.
+2. **Share the language's build/dependency dirs to avoid re-fetching and re-compiling from scratch.** After creating a workspace, populate its heavy build/deps directories from the base via **APFS clone on macOS (`cp -c`)**, a reflink copy on Linux (`cp --reflink=auto`), or a **symlink** as the portable fallback. Match the language:
+
+   | Language | Dirs to clone/symlink |
+   |----------|----------------------|
+   | Elixir | `_build/`, `deps/` |
+   | Rust | `target/` |
+   | Node | `node_modules/` |
+   | Python | `.venv/` |
+   | Go | the module/build cache (usually already shared via `GOPATH`/`GOCACHE`) |
+
+   Prefer clone/reflink over symlink for `_build`/`target` so a workspace's writes don't corrupt the base's cache; symlink is fine for immutable, restore-from-lockfile dirs like `deps`/`node_modules`. Worktrunk's post-create hooks may already do env/deps setup — if so, let them run and only fill gaps. The goal is warm caches so the first build in a fresh workspace is incremental, not cold.
 
 ### Decision 2 — Execution Mode
 

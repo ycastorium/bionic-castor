@@ -37,20 +37,22 @@ flowchart TD
 **Multi-task wave:**
 
 1. Mark every task of the wave `in_progress` in the native task list.
-2. For each task, create a throwaway worktree branched from the current tip of the base (`--no-cd` keeps your shell in the base; `-y` skips prompts):
+2. For each task, create a throwaway worktree under `.workspaces/`, branched from the current tip of the base (`--no-cd` keeps your shell in the base; `-y` skips prompts):
 
    ```
    wt switch --create task/<n>-<slug> --base <base-branch> --no-cd -y
    ```
 
-   Get each worktree's path from `wt list --format json`.
+   Get each worktree's path from `wt list --format json`. Prefer placing it under `.workspaces/` (steer worktrunk's config there, or fall back to `git worktree add .workspaces/task-<n>-<slug>` if `wt` won't honour the location).
 
-   **On Jujutsu**, create a workspace instead, then reposition its `@` onto the base bookmark's tip (a fresh workspace otherwise starts empty on top of the current workspace's parent, not the base):
+   **On Jujutsu**, create a workspace under `.workspaces/` instead, then reposition its `@` onto the base bookmark's tip (a fresh workspace otherwise starts empty on top of the current workspace's parent, not the base):
 
    ```
-   jj workspace add ../task-<n>-<slug>
-   cd ../task-<n>-<slug> && jj new <base-bookmark>
+   jj workspace add .workspaces/task-<n>-<slug>
+   cd .workspaces/task-<n>-<slug> && jj new <base-bookmark>
    ```
+
+   Then **warm the workspace's build/deps caches** from the base (APFS clone `cp -c` on macOS, `cp --reflink=auto` on Linux, or symlink) per the language table in `SKILL.md` — e.g. Elixir `cp -c -R _build deps <workspace>/`, Rust `cp -c -R target <workspace>/` — so the first build is incremental, not cold. Skip whatever worktrunk's post-create hooks already populated.
 3. Dispatch one implementer subagent per task, all concurrently, each pointed at its own worktree path (or jj workspace path). Pick or create agents the same way the sequential flow does: prefer a specialised agent over a generic one, choose the model by task complexity. Every implementer follows the same rules: read `architecture.md` and its task first, **tdd skill mandatory**, **ponytail** for simplicity, implement only the assigned task, and **ping the parent and wait** when blocked — never guess.
 4. Each task is code-reviewed inside its own worktree/workspace (separate review agent, **ponytail-review** plus the task's acceptance criteria) and committed there as **a single commit** with the task's suggested message (`git commit` on git — review fixes get amended in, not stacked as extra commits; `jj commit -m` on Jujutsu — review fixes go back into `@` with `jj squash` before the final `jj describe`/`jj commit`, so it stays one change).
 
