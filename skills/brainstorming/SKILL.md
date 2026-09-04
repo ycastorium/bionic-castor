@@ -1,214 +1,105 @@
 ---
 name: brainstorming
-description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Triages the request onto a fast lane (simple changes: quick discussion + confirmed plan in chat, then straight to implementation) or the full spec flow (real design decisions: explores intent and produces a spec document for the architect skill)."
+description: "Use before any creative work - creating features, building components, adding functionality, modifying behavior, or answering feasibility questions like 'can we...' or 'is it possible to...'. Applies even when the change looks trivial."
 ---
 
-# Brainstorming Ideas Into Specs
+# Brainstorming
 
-Help turn ideas into a spec through natural collaborative dialogue. The spec captures the **what and why**: the problem, the goals, the options considered, and the business-level decisions. It deliberately stops short of the technical **how** — architecture, technology choices, and diagrams belong to the architect skill, which consumes the spec as its input.
-
-Start by understanding the current project context, then **triage the request** onto one of two lanes: the **full spec flow** for anything with real design decisions, or the **fast lane** for genuinely simple, well-understood changes. Whichever lane, ask questions one at a time to refine the idea before acting.
+Turn an idea into an approved design before any code. The ceremony scales with the task; the approval gate never does. The architectural path produces one `design.md` that records the **what and why** (problem, goals, options, decisions) and the **how** (components, flows, technology), which the generate-tasks skill consumes.
 
 <HARD-GATE>
-Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until EITHER:
-- (full spec flow) you have presented a spec and the user has approved it, OR
-- (fast lane) you have stated the plan in chat and the user has confirmed both the lane and the plan.
-
-You may never skip straight to implementation with no triage, no discussion, and no user confirmation.
+Do NOT write code, scaffold a project, invoke an implementation skill, or take any implementation action until you have told the user what you intend and they have approved it. This holds on every path. A two-sentence design in chat still needs a yes.
 </HARD-GATE>
 
-## Triage: Fast Lane vs Full Spec Flow
+## Three Paths
 
-Before anything else, decide which lane the request belongs on. **You propose the lane and its reasoning; the user confirms or overrides.** State your read explicitly — e.g. *"This looks simple enough to skip the full spec — I'd do a quick pass and go straight to implementation. Sound right?"* — and wait for confirmation before proceeding on the fast lane.
+Before your first question, explore the project context (files, docs, recent commits), classify the request, and say the classification out loud with your reasoning so the user can override it: *"This looks bounded, so I'll present a short design here rather than write a doc. Sound right?"*
 
-**Fast lane** — genuinely simple, when ALL of these hold:
+- **Spike**: a feasibility question ("can we...", "is it possible...", "quick and dirty is fine") whose output is an answer, not code you keep. Present the question and what you will try in 2-3 sentences, get a nod, investigate as cheaply as correctness allows, report a recommendation. No document. Anything built stays labeled throwaway; keeping it is a new request that gets its own classification.
+- **Bounded**: a well-scoped change to a flow that already exists in this repo to read: a bug fix, a flag, a small endpoint, a one-file refactor. Understanding the kind of app is not enough; if there is no existing flow to change, it is not bounded. Ask the clarifying questions that matter (one per message), present a short design in chat, STOP until the user says yes. No document.
+- **Architectural**: new projects, new subsystems, new capabilities, changes that restructure how components fit or alter interfaces others depend on, or anything with real options to weigh. Full process below, ending in `design.md`.
 
-- Single, well-understood change with a clear intent
-- Bounded blast radius: one file or one small module, no new subsystem
-- No real design trade-offs — there isn't a menu of options worth weighing
-- Low ambiguity: success is obvious and checkable
-- A wrong move is cheap to reverse
+When in doubt, take the heavier path. The ratchet is one-way: hidden complexity discovered mid-task upgrades the path. Stop, say so, and step up. Nothing downgrades mid-task.
 
-Typical fast-lane work: a bug fix, a config tweak, a small helper, a copy/string change, an obvious local refactor, a well-specified one-liner.
+| Excuse | Reality |
+|--------|---------|
+| "Too simple to need a design" | Simple means a short design, not no design. Two sentences in chat, then approval. |
+| "I'll call it bounded and skip the doc" | Reaching for a label to skip work IS the doubt. Take the heavier path. |
+| "The design is obvious, I'll start while they read it" | The gate is the approval, not the design's length. Present, then stop. |
+| "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. No existing flow means architectural. |
+| "The spike works, so I'll keep the code" | A spike's output is an answer. Keeping the code is a new request. |
+| "It grew, but I'm almost done" | Hidden complexity upgrades the path mid-task. Stop and say so. |
+| "The user seems in a hurry" | Hurry is not a classification criterion. Hidden design decisions are where rushed work is wasted. |
 
-**Full spec flow** — the default whenever ANY of these appear:
+## Spike Path
 
-- New feature, component, or capability that didn't exist
-- Genuine options with trade-offs to weigh
-- Cross-cutting or multi-subsystem impact
-- Ambiguous requirements or unstated business decisions
-- A wrong decision is expensive to reverse
+1. Explore enough context to frame the probe.
+2. Present the question and probe plan in 2-3 sentences. Get a nod.
+3. Investigate as cheaply as correctness allows.
+4. Report findings as a recommendation. Label anything built as throwaway.
 
-**When in doubt, choose the full spec flow.** The fast lane is a deliberate exception for the truly simple, not the default. If you start on the fast lane and discover hidden design decisions or ambiguity, stop and escalate to the full flow — tell the user why.
+## Bounded Path
 
-## Anti-Pattern: Fast-Laning To Dodge The Work
+1. Explore project context.
+2. Ask the clarifying questions that matter, one per message, multiple choice when possible.
+3. Present a short design in chat: **what** changes, **why**, files touched, how you will test it, **done when** (the observable condition).
+4. STOP and wait for an explicit yes.
+5. Implement: load the **tdd** skill and the **ponytail** skill and proceed directly. No document, no task list.
 
-The fast lane exists for genuinely simple changes, not to avoid thinking. Do not classify something as simple just because the user seems in a hurry, because the spec feels tedious, or because the change "looks" like a one-liner before you've understood it. "Simple" projects with hidden design decisions are where unexamined assumptions cause the most wasted work. If the criteria above don't ALL hold, it's the full spec flow.
+## Architectural Path
 
-## Fast Lane Checklist
+Create a task for each item and complete them in order.
 
-For requests triaged onto the fast lane, complete these in order — no spec, no architect, no generate-tasks:
+1. **Explore project context**: files, docs, recent commits. If the request spans multiple independent subsystems ("a platform with chat, billing, and analytics"), flag it before asking detailed questions and help the user decompose it; each sub-project gets its own design → tasks → implementation cycle. Brainstorm the first one.
+2. **Ask clarifying questions**: one per message, multiple choice preferred. Understand purpose, constraints, success criteria. Stop when you can state what is being built and why without guessing.
+3. **Propose 2-3 problem-level options**: scope variations, build vs buy vs adapt, phased vs all-at-once, which users or flows to serve first. Lead with your recommendation and reasoning. Stay at what-and-why altitude here; technical choices come in step 5.
+4. **Present the spec half**: sections 1-7 of the document structure, each scaled to its complexity (a few sentences to 200-300 words). Ask after each section whether it looks right. Get approval of the whole spec half before designing the how.
+5. **Design the architecture half**: read `references/architecture.md` in this skill directory, then explore the codebase, propose 2-3 technical approaches with your recommendation, and present sections 8-15 the same way, section by section with approval.
+6. **Critique review**: attack the approved design as a skeptical colleague would. What would I do differently starting over? Which option was dismissed too quickly? What did I miss: unstated requirements, affected users, failure modes, migrations, concurrency, security, operations? Which assumptions were never validated with the user? Where does the design bend if an open question resolves the other way? Bring material findings back to the user before writing; otherwise say it came up clean. Either way the findings go into the document.
+7. **Write `design.md`**: follow the Design Document Structure. Save to the project's Obsidian vault at `specs/YYYY-MM-DD-<topic>/design.md` (user preference overrides). If you do not know the vault location, load the **obsidian** skill.
+8. **Self-review**: the checklist below. Fix inline, no re-review. For a large or high-stakes design, dispatch an independent reviewer with `design-document-reviewer-prompt.md` instead of relying on your own read.
+9. **User review gate**: "Design written to `<path>`. Please review it and tell me if you want changes." Wait. Apply changes, re-run the self-review, repeat until approved.
+10. **Hand off**: suggest loading the **generate-tasks** skill. It is the only next step; do not start implementing.
 
-1. **Explore project context** — check the relevant files, docs, recent commits
-2. **Propose the lane** — state that this looks simple, why, and get the user's confirmation to skip the full spec
-3. **Quick clarifying discussion** — a short back-and-forth (one question at a time) to nail down exactly what's being changed and how you'll know it's right
-4. **State the plan in chat** — 3-5 lines: what you're changing, why, and how you'll know it's done. Do NOT write a note to the vault; the fast lane produces no document
-5. **User confirms the plan** — a quick "here's what I'll do, look right?" before touching code
-6. **Hand off to implementation** — proceed directly to implementing the change
+## Design Document Structure
 
-If the discussion surfaces real design decisions or ambiguity, escalate to the full spec flow and tell the user why.
+Write for a reader with zero context. A new stakeholder reads the spec half and understands what is being built and why; a new developer reads the architecture half and could build it. Record reasoning, not just conclusions. Scale sections to the project: a small feature gets short sections, not fewer sections.
 
-## Full Spec Flow Checklist
+**Spec half** (what and why):
 
-You MUST create a task for each of these items and complete them in order:
+1. **Summary**: two or three sentences, what we are building and why it matters.
+2. **Context & Problem**: what hurts today, what happens if we do nothing. Define domain terms a newcomer would not know.
+3. **Goals & Non-Goals**: explicit lists.
+4. **Considered Options**: every problem-level option discussed, including discarded ones: what it was, what made it attractive, the specific reason it was rejected. Prevents relitigating.
+5. **Chosen Direction**: the option picked and why, described as outcomes and behavior a user or caller experiences.
+6. **Success Criteria**: observable, checkable conditions.
+7. **Constraints**: hard boundaries the design must respect: existing stack, compliance, deadlines, compatibility. Global rules an implementer must obey (version floors, naming rules, exact values) go here verbatim; generate-tasks copies them into every task list.
 
-1. **Explore project context** — check files, docs, recent commits
-2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
-3. **Propose 2-3 options** — problem-level alternatives with trade-offs and your recommendation
-4. **Present the spec** — in sections scaled to their complexity, get user approval after each section
-5. **Critique review** — step back and attack the approved direction: what would I do differently, what did I miss? (see below)
-6. **Write spec doc** — follow the Spec Document Structure, save to obsidian vault for the project the format is `specs/YYYY-MM-DD-<topic>/spec.md`
-7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-8. **User reviews written spec** — ask user to review the spec file before proceeding
+**Architecture half** (how), detailed in `references/architecture.md`:
 
-## Process Flow
+8. **Considered Approaches**: every technical approach discussed, with rejection reasons.
+9. **System Overview**: components and their relations, mermaid `flowchart`, real module and file names.
+10. **Components**: for each new or changed unit: purpose, interface as a signature sketch in the repo's language, dependencies, existing pattern to follow.
+11. **Data & Flows**: mermaid diagrams paired with prose.
+12. **Implementation Sketches**: pseudocode for the non-obvious parts only. Omit the section when nothing is non-obvious.
+13. **Technology Choices**: what was chosen, why, and what was deliberately not adopted.
+14. **Error Handling & Edge Cases**.
+15. **Testing Strategy**: what gets unit tests, integration coverage, manual verification.
 
-```mermaid
-flowchart TD
-    explore[Explore project context] --> triage{Triage:<br>simple or has design decisions?}
-    triage -- simple, user confirms fast lane --> fastdiscuss[Quick clarifying discussion]
-    fastdiscuss --> plan[State plan in chat]
-    plan --> planok{User confirms plan?}
-    planok -- changes --> fastdiscuss
-    planok -- escalate: hidden decisions --> questions
-    planok -- approved --> impl([Hand off to implementation])
-    triage -- design decisions --> questions[Ask clarifying questions]
-    questions --> approaches[Propose 2-3 problem-level options]
-    approaches --> present[Present spec sections]
-    present --> approve{User approves?}
-    approve -- no, revise --> present
-    approve -- yes --> critique[Critique review:<br>what would I do differently?<br>what did I miss?]
-    critique -- material findings --> present
-    critique -- clean --> write[Write spec doc]
-    write --> selfreview[Spec self-review, fix inline]
-    selfreview --> specreview{User reviews spec?}
-    specreview -- changes requested --> write
-    specreview -- approved --> done([Reviewed spec in vault,<br>hand off to architect skill])
-```
+**Closing sections:**
 
-**Two terminal states.** On the **fast lane**, the terminal state is a confirmed plan in chat — nothing is written to the vault — and the next step is implementation directly. On the **full spec flow**, the terminal state is a reviewed spec in obsidian — do NOT invoke frontend-design, mcp-builder, or any other implementation skill; the next step is the **architect** skill, which turns the spec into a technical architecture document.
+16. **Critique Findings**: what was reconsidered, what was missed then addressed, accepted limitations.
+17. **Open Questions**: anything deferred and what would resolve it.
 
-## The Process
+## Self-Review
 
-**Triage first:**
-
-- After exploring context, decide the lane (see the Triage section above) and propose it to the user with your reasoning. Proceed on the fast lane only once the user confirms. When in doubt, use the full spec flow.
-
-**Understanding the idea:**
-
-- Check out the current project state first (files, docs, recent commits)
-- Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
-- If the project is too large for a single spec, help the user decompose into sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project through the normal flow. Each sub-project gets its own spec → architecture → tasks → implementation cycle.
-- For appropriately-scoped projects, ask questions one at a time to refine the idea
-- Prefer multiple choice questions when possible, but open-ended is fine too
-- Only one question per message - if a topic needs more exploration, break it into multiple questions
-- Focus on understanding: purpose, constraints, success criteria
-- Use the grill-me skill to help with questions
-
-**Exploring options:**
-
-- Propose 2-3 different options at the problem level: scope variations, build vs buy vs adapt, phased vs all-at-once, which users/flows to serve first
-- Keep the discussion at the level of what to build and why — implementation-level choices (which database, which library, how modules split) are settled later by the architect skill. If a technical constraint genuinely shapes the decision (e.g., "we must stay on the existing stack"), record it as a constraint, not a design.
-- Present options conversationally with your recommendation and reasoning
-- Lead with your recommended option and explain why
-
-**Presenting the spec:**
-
-- Once you believe you understand what you're building and why, present the spec
-- Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
-- Ask after each section whether it looks right so far
-- Cover: problem, goals and non-goals, options considered, success criteria, constraints
-- Be ready to go back and clarify if something doesn't make sense
-
-**Critique review (after approval, before writing the doc):**
-
-Step back and attack the approved direction as if reviewing a colleague's work. Ask yourself:
-
-- What would I do differently if I started over? Was any option dismissed too quickly?
-- What did I miss? Unstated requirements, affected users, operational or security implications, business risks?
-- Which assumptions did we never validate with the user?
-- What would a skeptical stakeholder poke at first?
-
-If the critique surfaces anything material, bring it back to the user before writing the doc ("before I write this up, the critique pass raised X") and revise if needed. If nothing material comes up, say so briefly and continue. Either way, keep the critique findings — they go into the spec's Critique Findings section as part of the reasoning trail.
-
-## Fast Lane Plan Structure
-
-For fast-lane changes, skip the full spec structure and no document is written — state a short plan (3-5 lines) directly in chat:
-
-- **What** — the change in one sentence
-- **Why** — the problem or reason it's needed
-- **Done when** — the observable condition that means it's finished
-
-No vault note, no options analysis, no critique pass, no architect hand-off. Confirm the plan with the user, then implement.
-
-## Spec Document Structure
-
-Write the spec for a reader with zero context: a junior developer or a new stakeholder should be able to read it top to bottom and understand what is being built, why it matters, and why this shape and not another. Record the reasoning, not just the conclusions. Scale each section to the project — a small utility gets short sections, not fewer sections.
-
-Required sections, in order:
-
-1. **Summary** — two or three sentences: what we are building and why it matters.
-2. **Context & Problem** — the situation that motivated this work, what hurts today, and what happens if we do nothing. Define domain terms a newcomer would not know.
-3. **Goals & Non-Goals** — explicit lists of what this work delivers and what it deliberately leaves out.
-4. **Considered Options** — every problem-level option discussed during brainstorming, including the discarded ones. For each: what it was, what made it attractive, and the specific reason it was rejected. This section prevents future readers from relitigating settled decisions.
-5. **Chosen Direction** — the option we picked and the reasoning, described in terms of outcomes and behavior, not implementation. What will exist that doesn't today, and how a user or caller experiences it.
-6. **Success Criteria** — how we will know the work achieved its purpose. Observable, checkable conditions.
-7. **Constraints** — hard boundaries the technical design must respect: existing stack, compliance, deadlines, budget, compatibility.
-8. **Critique Findings** — the output of the critique review: what was reconsidered, what was missed and then addressed, and anything accepted as a known limitation.
-9. **Open Questions** — anything deferred, and what would resolve it.
-
-Architecture, component design, data flows, error handling, and testing strategy do NOT belong here — they are the architect skill's output. If the conversation surfaced strong technical opinions, record them under Constraints (if binding) or Open Questions (if advisory) so the architect inherits them.
-
-## After the Spec
-
-**Documentation:**
-
-- Write the validated spec following the Spec Document Structure above to the project vault on obsidian at `specs/YYYY-MM-DD-<topic>/spec.md`
-  - (User preferences for spec location override this default)
-
-**Spec Self-Review:**
-After writing the spec document, look at it with fresh eyes:
-
-1. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
-2. **Internal consistency:** Do any sections contradict each other? Do the goals match the chosen direction?
-3. **Scope check:** Is this focused enough for a single architecture document, or does it need decomposition?
-4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
-5. **Altitude check:** Did implementation detail leak in — technology picks, module layouts, diagrams? Move binding items to Constraints and drop the rest; the architect decides the how.
-6. **Structure check:** All sections from the Spec Document Structure present? Discarded options recorded with their rejection reasons?
-7. **Audience check:** Could a junior developer or new stakeholder follow the reasoning without prior context? Any unexplained jargon or assumed knowledge? Fix it.
-
-Fix any issues inline. No need to re-review — just fix and move on.
-
-For a larger or higher-stakes spec, dispatch an independent subagent to review it instead of relying on your own read. Use the prompt template at `skills/brainstorming/spec-document-reviewer-prompt.md`.
-
-**User Review Gate:**
-After the spec review loop passes, ask the user to review the written spec before proceeding:
-
-> "Spec written to vault `<path>`. Please review it and let me know if you want to make any changes"
-
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
-
-**Hand-off:**
-Once the user approves the spec, suggest loading the **architect** skill — it reads the spec, explores the codebase, and produces the technical architecture document (`architecture.md`) that generate-tasks consumes.
-
-## Key Principles
-
-- **One question at a time** - Don't overwhelm with multiple questions
-- **Multiple choice preferred** - Easier to answer than open-ended when possible
-- **YAGNI ruthlessly** - Remove unnecessary features from all options
-- **Stay at problem altitude** - The spec records what and why; the architect decides how
-- **Explore options** - Always propose 2-3 options before settling
-- **Critique your own work** - After approval, ask what you would do differently and what you missed
-- **Incremental validation** - Present sections, get approval before moving on
-- **Preserve the reasoning trail** - Discarded options and the why behind decisions belong in the spec
-- **Be flexible** - Go back and clarify when something doesn't make sense
+1. **Placeholders**: any "TBD", "TODO", vague requirement, hand-waved mechanism ("somehow syncs")? Fix.
+2. **Consistency**: goals match the chosen direction; diagrams match prose; a component's interface matches how other sections use it; sketches match the interfaces they claim.
+3. **Coverage**: every Goal maps to a component or flow; nothing serves a Non-Goal; every Constraint is respected.
+4. **Scope**: focused enough for one task list, or does it need decomposition?
+5. **Ambiguity**: could any requirement be read two ways? Pick one and say it.
+6. **Pointers are real**: referenced files, modules, patterns exist or are clearly marked new. Never invent paths.
+7. **Sketches**: repo language, real types, codebase idioms, short, marked illustrative. Every non-obvious mechanism has one; nothing trivial does.
+8. **Feasibility**: could generate-tasks decompose this into commit-sized tasks without guessing? Sharpen vague sections.
+9. **YAGNI**: anything designed that no goal asks for? Cut it.
+10. **Audience**: a junior developer could follow the reasoning without prior context; no unexplained jargon.

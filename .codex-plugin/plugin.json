@@ -18,7 +18,7 @@
   "interface": {
     "displayName": "Bionic Castor",
     "shortDescription": "Personal workflow skills for Codex.",
-    "longDescription": "Bionic Castor bundles personal workflow skills for brainstorming, task generation, task implementation, TDD, Obsidian notes, and Ponytail-style minimal engineering.",
+    "longDescription": "Bionic Castor bundles personal workflow skills: brainstorming into a design doc, task generation, subagent-driven task implementation, TDD, Obsidian notes, and Ponytail-style minimal engineering.",
     "developerName": "Ygor Castor",
     "category": "Productivity",
     "capabilities": [

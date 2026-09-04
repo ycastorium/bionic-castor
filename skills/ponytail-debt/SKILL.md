@@ -1,7 +1,7 @@
 ---
 name: ponytail-debt
 description: >
-  Harvest every `TODO:` comment in the codebase into a debt ledger, so the
+  Harvest every `NOTE:` shortcut comment in the codebase into a debt ledger, so the
   deliberate shortcuts and deferrals ponytail leaves behind get tracked instead
   of rotting into "later means never". Use when the user says "ponytail debt",
   "/ponytail-debt", "what did ponytail defer", "list the shortcuts", "ponytail
@@ -35,7 +35,7 @@ and the trigger straight from the comment. Want an owner per row too? add
 Flag the rot risk: any `NOTE:` comment that names no upgrade path or
 trigger gets a `no-trigger` tag, those are the ones that silently rot.
 
-End with `<N> markers, <M> with no trigger.` Nothing found: `No todo: debt. Clean ledger.`
+End with `<N> markers, <M> with no trigger.` Nothing found: `No NOTE: debt. Clean ledger.`
 
 ## Boundaries
 

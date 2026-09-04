@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Resolve and create the git-ignored directory that holds one task list's
+# short-lived artifacts: task briefs, implementer reports, review packages.
+# Prints the absolute path.
+#
+# One directory per task list, named after the tasks.md parent folder
+# (specs/2026-06-16-feature/tasks.md -> .workspaces/artifacts/2026-06-16-feature/),
+# so two task lists in the same repo never read each other's artifacts.
+#
+# Run from the base workspace. Works on git and Jujutsu repos.
+#
+# Usage: workspace TASKS_FILE
+set -euo pipefail
+
+[ $# -eq 1 ] || { echo "usage: workspace TASKS_FILE" >&2; exit 2; }
+tasks=$1
+[ -f "$tasks" ] || { echo "no such tasks file: $tasks" >&2; exit 2; }
+
+slug=$(basename "$(cd "$(dirname "$tasks")" && pwd)")
+case "$slug" in
+  ""|"."|".."|"/") slug=$(basename "$tasks" .md) ;;
+esac
+
+if root=$(git rev-parse --show-toplevel 2>/dev/null); then :
+elif root=$(jj root 2>/dev/null); then :
+else
+  echo "not inside a git or jj repository" >&2; exit 2
+fi
+
+base="$root/.workspaces"
+dir="$base/artifacts/$slug"
+mkdir -p "$dir"
+printf '*\n' > "$base/.gitignore"
+cd "$dir" && pwd

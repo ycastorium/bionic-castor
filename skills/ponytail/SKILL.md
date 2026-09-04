@@ -103,8 +103,12 @@ test, YAGNI applies to tests too.
 
 ## Boundaries
 
-Ponytail governs what you build, not how you talk (pair with Caveman for
-terse prose). "stop ponytail" / "normal mode": revert. Level persists until
-changed or session end.
+Ponytail governs what you build, not how you talk. "stop ponytail" /
+"normal mode": revert. Level persists until changed or session end.
+
+Inside the implementing-tasks loop, ponytail is the implementer's default
+and ponytail-review is the reviewer's third lens; the task brief's
+acceptance criteria count as "explicitly requested" and are never
+simplified away.
 
 The shortest path to done is the right path.

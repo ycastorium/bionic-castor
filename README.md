@@ -1,19 +1,32 @@
 # bionic-castor
 
-Skills-only plugin for Claude Code and Codex. Bundles the following skills,
-copied verbatim:
+Skills-only plugin for Claude Code and Codex.
+
+## Workflow
+
+`brainstorming` → `generate-tasks` → `implementing-tasks`, with `tdd` and
+`ponytail` applied while writing code and `ponytail-review` as the reviewer's
+complexity lens.
+
+- `brainstorming` — classify a request as spike, bounded, or architectural;
+  architectural work ends in one `design.md` (spec half + architecture half)
+- `generate-tasks` — break `design.md` into a commit-sized `tasks.md` with
+  interfaces, waves, and global constraints
+- `implementing-tasks` — drive `tasks.md` to completion: task briefs, report
+  files, review packages, a capped fix loop, recorded rulings, final review
+- `tdd` — test-driven development with red-green-refactor
+
+## Ponytail
 
 - `ponytail` — force the laziest solution that actually works
-- `ponytail-audit` — whole-repo over-engineering audit
-- `ponytail-help` — quick-reference card for ponytail modes
 - `ponytail-review` — code review focused on over-engineering
-- `ponytail-debt` — harvest `ponytail:` comments into a debt ledger
-- `implementing-tasks` — drive a tasks.md list through implementation
-- `tdd` — test-driven development with red-green-refactor
-- `generate-tasks` — break an architecture doc into a commit-sized task list
-- `brainstorming` — explore intent, requirements and business decisions into a spec
-- `architect` — turn an approved spec into a technical architecture document
-- `obsidian-cli` — read and write Obsidian notes via the `obsidian` CLI
+- `ponytail-audit` — whole-repo over-engineering audit
+- `ponytail-debt` — harvest `NOTE:` shortcut comments into a debt ledger
+- `ponytail-help` — quick-reference card for ponytail modes
+
+## Tools
+
+- `obsidian` — read and write Obsidian notes as plain files
 - `jujutsu` — drive the `jj` CLI without falling back on git muscle memory
 - `ripgrep` — use `rg` correctly: escaping, file selection, and output shaping
 - `gh-stack` — manage stacked pull requests with the `gh stack` CLI extension

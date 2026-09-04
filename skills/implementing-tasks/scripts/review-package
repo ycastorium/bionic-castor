@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Write a review package (commit list, stat summary, full diff with extended
+# context) for BASE..HEAD to a file the reviewer reads in one call. The diff
+# never enters the orchestrator's context. Use the BASE recorded before the
+# implementer was dispatched, never HEAD~1, so multi-commit tasks stay intact.
+#
+# Works with git revisions, or with jj change ids on a Jujutsu repo. Run it in
+# the workspace whose history holds the range (a task worktree in parallel mode).
+#
+# Usage: review-package TASKS_FILE BASE HEAD [OUTFILE]
+# Default OUTFILE: <workspace>/review-<base>..<head>.diff (see ./workspace)
+set -euo pipefail
+
+if [ $# -lt 3 ] || [ $# -gt 4 ]; then
+  echo "usage: review-package TASKS_FILE BASE HEAD [OUTFILE]" >&2
+  exit 2
+fi
+
+tasks=$1
+base=$2
+head=$3
+[ -f "$tasks" ] || { echo "no such tasks file: $tasks" >&2; exit 2; }
+
+vcs=""
+if git rev-parse --verify --quiet "$base" >/dev/null 2>&1 \
+   && git rev-parse --verify --quiet "$head" >/dev/null 2>&1; then
+  vcs=git
+  short_base=$(git rev-parse --short "$base")
+  short_head=$(git rev-parse --short "$head")
+elif command -v jj >/dev/null 2>&1 && jj log -r "$base" --no-graph -T '""' >/dev/null 2>&1 \
+     && jj log -r "$head" --no-graph -T '""' >/dev/null 2>&1; then
+  vcs=jj
+  short_base=$(jj log -r "$base" --no-graph -T 'change_id.short()')
+  short_head=$(jj log -r "$head" --no-graph -T 'change_id.short()')
+else
+  echo "cannot resolve BASE=$base and HEAD=$head with git or jj" >&2
+  exit 2
+fi
+
+if [ $# -eq 4 ]; then
+  out=$4
+else
+  dir=$("$(cd "$(dirname "$0")" && pwd)/workspace" "$tasks")
+  out="$dir/review-${short_base}..${short_head}.diff"
+fi
+
+{
+  echo "# Review package: ${base}..${head}"
+  echo
+  echo "## Commits"
+  if [ "$vcs" = git ]; then
+    git log --oneline "${base}..${head}"
+  else
+    jj log -r "${base}..${head}" --no-graph -T 'change_id.short() ++ " " ++ description.first_line() ++ "\n"'
+  fi
+  echo
+  echo "## Files changed"
+  if [ "$vcs" = git ]; then
+    git diff --stat "${base}..${head}"
+  else
+    jj diff --from "$base" --to "$head" --stat
+  fi
+  echo
+  echo "## Diff"
+  if [ "$vcs" = git ]; then
+    git diff -U10 "${base}..${head}"
+  else
+    jj diff --from "$base" --to "$head" --git --context 10
+  fi
+} > "$out"
+
+echo "wrote ${out}: $(wc -c < "$out" | tr -d ' ') bytes (${vcs})"

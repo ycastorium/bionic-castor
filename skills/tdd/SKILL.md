@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
+description: Use when implementing any feature, bug fix, or behaviour change, before writing implementation code; also when the user mentions TDD, red-green-refactor, or test-first.
 ---
 
 # Test-Driven Development
@@ -48,27 +48,31 @@ When exploring the codebase, use the project's domain glossary so that test name
 
 Before writing any code:
 
-- [ ] Confirm with user what interface changes are needed
-- [ ] Confirm with user which behaviors to test (prioritize)
+- [ ] Confirm what interface changes are needed
+- [ ] Confirm which behaviors to test (prioritize)
 - [ ] Identify opportunities for [deep modules](deep-modules.md) (small interface, deep implementation)
 - [ ] Design interfaces for [testability](interface-design.md)
 - [ ] List the behaviors to test (not implementation steps)
-- [ ] Get user approval on the plan
+- [ ] Get approval on the plan
 
-Ask: "What should the public interface look like? Which behaviors are most important to test?"
+**Where the answers come from depends on how you were invoked.** Working from a task brief (implementing-tasks) or an approved in-chat design (brainstorming bounded path): the interface is the brief's `Produces` signature or the design, the behaviors are the acceptance criteria, and approval already happened; do not ask the user again. Working ad hoc: ask, "What should the public interface look like? Which behaviors are most important to test?"
 
-**You can't test everything.** Confirm with the user exactly which behaviors matter most. Focus testing effort on critical paths and complex logic, not every possible edge case.
+**You can't test everything.** Focus on critical paths and complex logic, not every possible edge case.
 
 ### 2. Tracer Bullet
 
 Write ONE test that confirms ONE thing about the system:
 
 ```
-RED:   Write test for first behavior → test fails
-GREEN: Write minimal code to pass → test passes
+RED:   Write test for first behavior → run it → it fails for the right reason
+GREEN: Write minimal code to pass → run it → it passes, output pristine
 ```
 
 This is your tracer bullet - proves the path works end-to-end.
+
+**Watch it fail.** Run the test before writing production code and read the failure. It must fail because the behavior is missing, not because of a typo or a missing import. A test that passes immediately is testing existing behavior; fix the test. If you did not watch it fail, you do not know it can catch the bug.
+
+**Name the break before writing the body.** What production change would make this test fail, and is that change a bug or a decision? Cannot name one → redesign around an observable behavior. Only a deliberate decision fails it (a constant's value, exact wording, private structure) → that is a change detector; test the behavior that depends on the decision instead. Derive the expected value by hand, as a literal or hand-checked fixture; an expectation computed by the code under test passes no matter what the code does.
 
 ### 3. Incremental Loop
 
@@ -104,6 +108,21 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 [ ] Test describes behavior, not implementation
 [ ] Test uses public interface only
 [ ] Test would survive internal refactor
+[ ] I can name the production change that fails it
+[ ] Watched it fail for the expected reason before writing code
 [ ] Code is minimal for this test
 [ ] No speculative features added
+[ ] Output pristine: no errors or warnings
 ```
+
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Too simple to test" | Simple code breaks. The test takes 30 seconds. |
+| "I'll write the tests after" | Tests written after pass immediately, which proves nothing. You never watched them fail, so you never proved they catch the bug. |
+| "I already manually tested it" | No record, no re-run, forgotten cases. Automated tests run the same way every time. |
+| "I'll write all the tests first, then all the code" | Horizontal slicing. Each test must respond to what the previous cycle taught you. |
+| "Deleting X hours of code is wasteful" | Sunk cost. Keeping code you cannot trust is the waste. Rewrite from the tests. |
+| "Hard to test, so I'll mock it" | Hard to test means hard to use. Fix the interface, see [mocking.md](mocking.md). |
+| "Existing code has no tests" | You are improving it. Add a test for the behavior you touch. |

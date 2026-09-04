@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Extract one task from tasks.md into a brief file the implementer reads in a
+# single call. The brief holds the "## Global Constraints" section followed by
+# the "## Task N: ..." section, so the task text never has to be pasted through
+# the orchestrator's context and the implementer never reads the whole list.
+#
+# Usage: task-brief TASKS_FILE N [OUTFILE]
+# Default OUTFILE: <workspace>/task-<N>-brief.md (see ./workspace)
+set -euo pipefail
+
+if [ $# -lt 2 ] || [ $# -gt 3 ]; then
+  echo "usage: task-brief TASKS_FILE N [OUTFILE]" >&2
+  exit 2
+fi
+
+tasks=$1
+n=$2
+[ -f "$tasks" ] || { echo "no such tasks file: $tasks" >&2; exit 2; }
+
+if [ $# -eq 3 ]; then
+  out=$3
+else
+  dir=$("$(cd "$(dirname "$0")" && pwd)/workspace" "$tasks")
+  out="$dir/task-${n}-brief.md"
+fi
+
+awk -v n="$n" '
+  /^```/ { fence = !fence }
+  !fence && /^## / {
+    sect = 0
+    if ($0 ~ /^## Global Constraints/) sect = 1
+    else if ($0 ~ ("^## Task " n "([^0-9]|$)")) sect = 2
+  }
+  !fence && /^---[ \t]*$/ { next }
+  sect == 1 { print }
+  sect == 2 { print; found = 1 }
+  END { if (!found) exit 3 }
+' "$tasks" > "$out" || { rm -f "$out"; echo "task ${n} not found in ${tasks}" >&2; exit 3; }
+
+echo "wrote ${out}: $(wc -l < "$out" | tr -d ' ') lines"
