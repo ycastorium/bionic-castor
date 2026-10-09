@@ -19,7 +19,7 @@ Characteristics:
 - Uses public API only
 - Survives internal refactors
 - Describes WHAT, not HOW
-- One logical assertion per test
+- One behavior per test; several assertions on the same result are fine
 
 ## Bad Tests
 
@@ -54,4 +54,41 @@ test "create_user makes user retrievable":
   user = create_user(name: "Alice")
   retrieved = get_user(user.id)
   assert retrieved.name == "Alice"
+```
+
+## Tests Not Worth Writing
+
+These are correct, pass, and catch nothing. Delete them.
+
+```
+// WASTE: pass-through, no decision
+test "order.total returns total":
+  order = Order(total: 10)
+  assert order.total == 10
+
+// WASTE: tests the framework
+test "router maps /users to UsersController":
+  assert routes["/users"] == UsersController
+
+// WASTE: same branch, different input, five times
+test "discount for 10 items": ...
+test "discount for 11 items": ...
+test "discount for 12 items": ...
+
+// BETTER: one test per outcome plus the boundary
+test "no discount below 10 items":   # 9
+test "discount applies from 10 items":  # 10
+```
+
+```
+// WASTE: test infrastructure for two uses
+class OrderTestBuilder:
+  with_items(n) ...
+  with_discount(d) ...
+  build() ...
+
+// BETTER: inline; repeat three lines rather than own a builder
+test "discount applies from 10 items":
+  order = Order(items: ten_items(), discount: none)
+  assert checkout(order).total == 90
 ```
