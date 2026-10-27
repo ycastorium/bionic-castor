@@ -17,6 +17,14 @@
 
 ---
 
+## Review Focus
+
+> Inputs and conditions the design implies but no task would otherwise test, most likely to bite first, at most five. Each is pinned by an acceptance criterion in the task named. `none found` if you checked and found none.
+
+- <condition, e.g. "import file with zero rows"> → <expected behavior, e.g. "returns an empty report, no crash"> (Task N)
+
+---
+
 ## Progress
 
 - [ ] Task 1: <title>

@@ -15,6 +15,7 @@ complexity lens.
 - `implementing-tasks` — drive `tasks.md` to completion: task briefs, report
   files, review packages, a capped fix loop, recorded rulings, final review
 - `tdd` — test-driven development with red-green-refactor
+- `verification-before-completion` — run the proving command and read its output before claiming anything is done, fixed, or passing
 
 ## Ponytail
 

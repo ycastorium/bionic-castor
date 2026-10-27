@@ -13,7 +13,9 @@ Do NOT write code, scaffold a project, invoke an implementation skill, or take a
 
 ## Three Paths
 
-Before your first question, explore the project context (files, docs, recent commits), classify the request, and say the classification out loud with your reasoning so the user can override it: *"This looks bounded, so I'll present a short design here rather than write a doc. Sound right?"*
+Before your first question, explore the project context (files, docs, recent commits, anything the user pointed at), classify the request, and say the classification out loud with your reasoning so the user can override it: *"This looks bounded, so I'll present a short design here rather than write a doc. Sound right?"*
+
+Never ask what the code, the docs, or the conversation already answer.
 
 - **Spike**: a feasibility question ("can we...", "is it possible...", "quick and dirty is fine") whose output is an answer, not code you keep. Present the question and what you will try in 2-3 sentences, get a nod, investigate as cheaply as correctness allows, report a recommendation. No document. Anything built stays labeled throwaway; keeping it is a new request that gets its own classification.
 - **Bounded**: a well-scoped change to a flow that already exists in this repo to read: a bug fix, a flag, a small endpoint, a one-file refactor. Understanding the kind of app is not enough; if there is no existing flow to change, it is not bounded. Ask the clarifying questions that matter (one per message), present a short design in chat, STOP until the user says yes. No document.
@@ -29,6 +31,7 @@ When in doubt, take the heavier path. The ratchet is one-way: hidden complexity 
 | "I understand this kind of app, so it's bounded" | Bounded measures the repo, not your familiarity. No existing flow means architectural. |
 | "The spike works, so I'll keep the code" | A spike's output is an answer. Keeping the code is a new request. |
 | "It grew, but I'm almost done" | Hidden complexity upgrades the path mid-task. Stop and say so. |
+| "The stack is obvious, I'll just pick it" | A default they never heard is one they could not reject. Ask who owns the choice; say what you picked. |
 | "The user seems in a hurry" | Hurry is not a classification criterion. Hidden design decisions are where rushed work is wasted. |
 
 ## Spike Path
@@ -51,15 +54,21 @@ When in doubt, take the heavier path. The ratchet is one-way: hidden complexity 
 Create a task for each item and complete them in order.
 
 1. **Explore project context**: files, docs, recent commits. If the request spans multiple independent subsystems ("a platform with chat, billing, and analytics"), flag it before asking detailed questions and help the user decompose it; each sub-project gets its own design → tasks → implementation cycle. Brainstorm the first one.
-2. **Ask clarifying questions**: one per message, multiple choice preferred. Understand purpose, constraints, success criteria. Stop when you can state what is being built and why without guessing.
+2. **Ask clarifying questions**: one per message, multiple choice preferred. Understand purpose, constraints, success criteria. Find out early which how-it-gets-made choices (platform, language, framework, libraries, hosting) the user wants to make, which they hand to you, and what they already have. When there is existing code, it decides by default. Stop when you can state what is being built and why without guessing.
 3. **Propose 2-3 problem-level options**: scope variations, build vs buy vs adapt, phased vs all-at-once, which users or flows to serve first. Lead with your recommendation and reasoning. Stay at what-and-why altitude here; technical choices come in step 5.
 4. **Present the spec half**: sections 1-7 of the document structure, each scaled to its complexity (a few sentences to 200-300 words). Ask after each section whether it looks right. Get approval of the whole spec half before designing the how.
 5. **Design the architecture half**: read `references/architecture.md` in this skill directory, then explore the codebase, propose 2-3 technical approaches with your recommendation, and present sections 8-15 the same way, section by section with approval.
 6. **Critique review**: attack the approved design as a skeptical colleague would. What would I do differently starting over? Which option was dismissed too quickly? What did I miss: unstated requirements, affected users, failure modes, migrations, concurrency, security, operations? Which assumptions were never validated with the user? Where does the design bend if an open question resolves the other way? Bring material findings back to the user before writing; otherwise say it came up clean. Either way the findings go into the document.
 7. **Write `design.md`**: follow the Design Document Structure. Save to the project's Obsidian vault at `specs/YYYY-MM-DD-<topic>/design.md` (user preference overrides). If you do not know the vault location, load the **obsidian** skill.
-8. **Self-review**: the checklist below. Fix inline, no re-review. For a large or high-stakes design, dispatch an independent reviewer with `design-document-reviewer-prompt.md` instead of relying on your own read.
-9. **User review gate**: "Design written to `<path>`. Please review it and tell me if you want changes." Wait. Apply changes, re-run the self-review, repeat until approved.
-10. **Hand off**: suggest loading the **generate-tasks** skill. It is the only next step; do not start implementing.
+8. **Self-review**: the checklist below. Fix inline, no re-review.
+9. **Builder check**: dispatch a fresh subagent with `builder-check-prompt.md` in this skill directory. It reads `design.md` as the developer who must turn it into tasks without talking to anyone, and lists the questions it would still have to guess at. Sort each one:
+   - **Already answered** by the conversation or the code: write the answer into the document.
+   - **Minor**: a sensible builder could settle it without changing what gets built. Settle it, and mark it in the document as your call.
+   - **The user's**: only the user can answer, and the answer changes what gets built. Bring these in one message, most important first, and update the document with the answers.
+
+   That is the only round of questions the check produces. Without a subagent tool, read the document as that builder yourself.
+10. **User review gate**: "Design written to `<path>`. Calls I made on your behalf: <list>. Please review it and tell me if you want changes." Wait. Apply changes, re-run the self-review, repeat until approved.
+11. **Hand off**: suggest loading the **generate-tasks** skill. It is the only next step; do not start implementing.
 
 ## Design Document Structure
 
@@ -82,7 +91,7 @@ Write for a reader with zero context. A new stakeholder reads the spec half and 
 10. **Components**: for each new or changed unit: purpose, interface as a signature sketch in the repo's language, dependencies, existing pattern to follow.
 11. **Data & Flows**: mermaid diagrams paired with prose.
 12. **Implementation Sketches**: pseudocode for the non-obvious parts only. Omit the section when nothing is non-obvious.
-13. **Technology Choices**: what was chosen, why, and what was deliberately not adopted.
+13. **Technology Choices**: what was chosen, who chose it (the user, or your call), why, and what was deliberately not adopted.
 14. **Error Handling & Edge Cases**.
 15. **Testing Strategy**: what gets unit tests, integration coverage, manual verification.
 
@@ -102,4 +111,5 @@ Write for a reader with zero context. A new stakeholder reads the spec half and 
 7. **Sketches**: repo language, real types, codebase idioms, short, marked illustrative. Every non-obvious mechanism has one; nothing trivial does.
 8. **Feasibility**: could generate-tasks decompose this into commit-sized tasks without guessing? Sharpen vague sections.
 9. **YAGNI**: anything designed that no goal asks for? Cut it.
-10. **Audience**: a junior developer could follow the reasoning without prior context; no unexplained jargon.
+10. **Your calls are marked**: every choice the user did not make (a default, a minor question you settled) says so. Nothing you decided reads as something they agreed to.
+11. **Audience**: a junior developer could follow the reasoning without prior context; no unexplained jargon.

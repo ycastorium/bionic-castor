@@ -21,9 +21,10 @@ Turn an approved `design.md` into an ordered list of **commit-sized tasks**. Eac
 4. **Decompose into commit-sized tasks.** One coherent change, typically a handful of files, that compiles and passes tests on its own. Fold setup, config, scaffolding, and docs into the task whose deliverable needs them. Split only where a reviewer could reject one task while approving its neighbor. Several tiny same-shape edits across files (a rename, a constant change, a field added everywhere) are one task, not N.
 5. **Write the Interfaces block.** For each task: `Consumes` (exact signatures it uses from earlier tasks) and `Produces` (exact names, parameter and return types later tasks rely on). This is how an implementer that sees only its task learns what its neighbours call things.
 6. **Order by dependency.** `Depends on` records *hard* dependencies (cannot compile or pass without an earlier task's code); the order must form a DAG. A soft forward reference (an email task linking to a route created later) is a `Reference:` pointer, not a dependency.
-7. **Mark execution waves.** Two tasks share a wave only when **both** hold: no dependency path between them, and their `Create:`/`Modify:` pointers touch disjoint files. When in doubt, separate waves: a wrong "parallel" costs merge conflicts, a wrong "sequential" only costs time. A single-task wave is normal.
-8. **Write the file** from `tasks-template.md`, filling every field for every task.
-9. **Self-review** (below), then **finish**.
+7. **Write the Review Focus.** With the design in front of you, list the inputs and conditions it implies but no task's acceptance criteria exercise: empty or huge input, duplicates, concurrent use, a missing dependency, a malformed file. A design's silence on an input is not permission for it to crash the program. Keep the five most likely to bite a real user, most likely first, each as the condition plus the behavior a reasonable person expects. Then pin each one: add an acceptance criterion with a named test to the task that owns the code. The `## Review Focus` section is the index; the acceptance criterion is what reaches the implementer, because a brief carries only its own task. Found none? Write `none found` so the section shows you checked.
+8. **Mark execution waves.** Two tasks share a wave only when **both** hold: no dependency path between them, and their `Create:`/`Modify:` pointers touch disjoint files. When in doubt, separate waves: a wrong "parallel" costs merge conflicts, a wrong "sequential" only costs time. A single-task wave is normal.
+9. **Write the file** from `tasks-template.md`, filling every field for every task.
+10. **Self-review** (below), then **finish**.
 
 ## Each Task Must Have
 
@@ -54,6 +55,7 @@ Re-read the design and check:
 4. **Waves are safe**: every task in exactly one wave; no task shares a wave with a transitive dependency; no file in the `Create:`/`Modify:` pointers of two tasks in one wave.
 5. **Interfaces line up**: every `Consumes` matches an earlier `Produces` by exact name and type.
 6. **Global Constraints** are copied verbatim, not paraphrased.
+7. **Review Focus is pinned**: every line names a task, and that task has an acceptance criterion with a named test for it.
 
 Fix inline, then finish.
 
